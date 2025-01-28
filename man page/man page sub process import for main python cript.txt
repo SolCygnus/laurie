@@ -1,0 +1,13 @@
+import subprocess
+
+def install_man_page():
+    try:
+        subprocess.run(["gzip", "main.1"], check=True)
+        subprocess.run(["sudo", "mv", "main.1.gz", "/usr/local/share/man/man1/"], check=True)
+        subprocess.run(["sudo", "mandb"], check=True)
+        print("Man page installed successfully. Use 'man main' to view.")
+    except subprocess.CalledProcessError:
+        print("Failed to install the man page.")
+
+# Call the function as part of the setup process
+install_man_page()
