@@ -7,7 +7,7 @@ import logging
 import os
 
 # Define log file
-LOG_FILE = "/var/log/laurie_repo.log"
+LOG_FILE = os.path.expanduser("~/laurie_repo.log")  # Store log in home directory
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "scripts")
 
 # Ensure the log file exists and has the correct permissions
@@ -45,7 +45,7 @@ def make_scripts_executable():
                 print(f"❌ Failed to make {script} executable: {e}")
 
 def run_bash_script(script_name):
-    """Runs a given bash script and consolidates its output into the main log."""
+    """Runs a given bash script and consolidates its output into the main log while also displaying it in real-time."""
     script_path = os.path.join(SCRIPTS_DIR, script_name)
 
     if not os.path.exists(script_path):
@@ -58,13 +58,18 @@ def run_bash_script(script_name):
         print(f"Executing: {script_name}...")
 
         with open(LOG_FILE, "a") as log_file:
-            result = subprocess.run(["bash", script_path], stdout=log_file, stderr=log_file, text=True)
+            process = subprocess.Popen(["bash", script_path], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
+            for line in process.stdout:
+                print(line, end="")  # Print to console
+                log_file.write(line)  # Write to log file
+                log_file.flush()
+            process.wait()
 
-        if result.returncode == 0:
+        if process.returncode == 0:
             logging.info(f"✅ Script {script_name} executed successfully.")
             print(f"✔ {script_name} executed successfully.")
         else:
-            logging.error(f"❌ Script {script_name} failed with return code {result.returncode}.")
+            logging.error(f"❌ Script {script_name} failed with return code {process.returncode}.")
             print(f"❌ {script_name} failed. Check logs.")
     except Exception as e:
         logging.error(f"❌ Error running {script_name}: {e}")
