@@ -75,7 +75,6 @@ echo "🖼️ Setting desktop background..."
 gsettings set org.cinnamon.desktop.background picture-uri "file://$TARGET_PATH"
 gsettings set org.cinnamon.desktop.background picture-options "zoom"
 
-
 ### Set Custom Bash Prompt ###
 SWORD="
 ▬▬ι═════════════ﺤ
@@ -106,4 +105,27 @@ echo "🔄 Reloading Bash configuration..."
 source ~/.bashrc || echo "ℹ️ Changes will apply on next login."
 
 echo "✅ Setup complete!"
+
+### Move Utilities folder to User Documents folder ###
+
+# Define the source and destination directories
+SOURCE_DIR="$(pwd)/utilities"
+DEST_DIR="$HOME/Documents"
+
+# Ensure the source directory exists
+if [ -d "$SOURCE_DIR" ]; then
+    # Move the directory
+    mv "$SOURCE_DIR" "$DEST_DIR"
+
+    # Check if the move was successful
+    if [ $? -eq 0 ]; then
+        echo "Successfully moved 'utilities' to $DEST_DIR"
+    else
+        echo "Error: Failed to move 'utilities'"
+        exit 1
+    fi
+else
+    echo "Error: 'utilities' directory not found!"
+    exit 1
+fi
 exit 0
