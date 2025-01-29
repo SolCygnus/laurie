@@ -84,11 +84,11 @@ if ! command -v apt > /dev/null; then
     exit 1
 fi
 
-# Set up ProtonVPN GUI
-setup_protonvpn_gui
-
 # Install packages via APT
 install_packages
+
+# Set up ProtonVPN GUI
+setup_protonvpn_gui
 
 # Install Anaconda
 install_anaconda
