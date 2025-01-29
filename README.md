@@ -7,11 +7,18 @@ Installing and running
 
 Step 1. Download Linux Mint 22.1 Cinamon. Install in preferred hypervisor
 
-Step 2. Clone the repo from the terminal.
+Step 2. Update, Snapshot, Install git
+    From the terminal run:
+    sudo apt update && sudo apt upgrade -y
+    sudo apt install git
+
+Turn off the VM and create a snapshot. general guidance would be to call it base and today's date.
+
+Step 3. Clone the repo from the terminal.
 Open a terminal and run:
     git clone https://github.com/SolCygnus/laurie
 
-Step 3. Make main.py executable and run
+Step 4. Make main.py executable and run
 From the terminal run:
     chmod +x the main.py
     main.py
