@@ -21,4 +21,4 @@ If there are any issues you can check the installation log here:
 
 
 
-Note: If using VMWare, make sure OIMMO is checked. If using VirtualBox ensure guest additions are installed. 
+Note: If using VMWare, under the VM settings for Processors ensure you check virtualize IOMMU and under Display uncheck Accelerate 3D graphics. If using VirtualBox ensure guest additions are installed. 
