@@ -75,7 +75,7 @@ if __name__ == "__main__":
     
     SCRIPTS = [
         "essential_packages.sh",
-        "clamav_install.sh",
+        "clamav_setup.sh",
         "browser_setup.sh",
         "vscode_setup.sh",
         "whisper_setup.sh",
