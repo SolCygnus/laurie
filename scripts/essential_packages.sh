@@ -13,6 +13,7 @@ PACKAGES=(
     "steghide"
     "exiftool"
     "curl"
+    "vlc"
 )
 
 # Function to install a package via APT
