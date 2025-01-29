@@ -7,7 +7,7 @@ import logging
 import os
 
 # Define log file
-LOG_FILE = os.path.expanduser("~/laurie_repo.log")  # Store log in home directory
+LOG_FILE = os.path.join(os.path.dirname(__file__), "laurie_repo.log")
 SCRIPTS_DIR = os.path.join(os.path.dirname(__file__), "scripts")
 
 # Ensure the log file exists and has the correct permissions

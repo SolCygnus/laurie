@@ -12,6 +12,7 @@ PACKAGES=(
     "protonvpn"
     "steghide"
     "exiftool"
+    "curl"
 )
 
 # Function to set up ProtonVPN repository and install ProtonVPN GUI
