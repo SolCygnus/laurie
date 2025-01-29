@@ -53,18 +53,28 @@ echo "🎉 Host share shortcuts setup complete!"
 
 ### Set Custom Background ###
 
-# Define the absolute path to the background image
-BACKGROUND_IMAGE="/usr/share/backgrounds/custom_wallpaper.jpg"  # Update this path
+### 🔍 Step 1: Locate the Cloned Repo ###
+# Determine the script's directory (assumes script is run from inside the cloned repo)
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+BACKGROUND_IMAGE="$REPO_DIR/background/E61317.jpg"
 
-# Ensure the file exists before applying
+### 🔄 Step 2: Copy Background Image to System Location ###
+TARGET_PATH="/usr/share/backgrounds/E61317.jpg"
+
+echo "📂 Copying background image to $TARGET_PATH..."
 if [[ -f "$BACKGROUND_IMAGE" ]]; then
-    gsettings set org.cinnamon.desktop.background picture-uri "file://$BACKGROUND_IMAGE"
-    gsettings set org.cinnamon.desktop.background picture-options "zoom"  # Options: none, wallpaper, centered, scaled, stretched, zoom, spanned
-    echo "✅ Desktop background set successfully: $BACKGROUND_IMAGE"
+    sudo cp "$BACKGROUND_IMAGE" "$TARGET_PATH"
+    echo "✅ Background image copied successfully."
 else
-    echo "❌ Background image not found. Please check the path: $BACKGROUND_IMAGE"
+    echo "❌ Error: Background image not found in $BACKGROUND_IMAGE."
     exit 1
 fi
+
+### Step 3: Apply the Custom Background ###
+echo "🖼️ Setting desktop background..."
+gsettings set org.cinnamon.desktop.background picture-uri "file://$TARGET_PATH"
+gsettings set org.cinnamon.desktop.background picture-options "zoom"
+
 
 ### Set Custom Bash Prompt ###
 SWORD="
