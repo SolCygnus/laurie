@@ -45,7 +45,7 @@ sudo python3 main.py
 If there are any issues, check the installation log:
 
 ```bash
-/var/log/laurie_repo.log
+~/laurie/laurie_repo.log
 ```
 
 ⚙️ VM Hypervisor Settings
