@@ -88,7 +88,8 @@ fi
 install_packages
 
 # Set up ProtonVPN GUI
-setup_protonvpn_gui
+# setup_protonvpn_gui
+# removing temporarily to resolve install issues. Will revisit function install
 
 # Install Anaconda
 install_anaconda
@@ -96,4 +97,4 @@ install_anaconda
 # Install Spyder
 install_spyder
 
-echo "All essential packages, including ProtonVPN GUI, Anaconda, and Spyder, have been installed successfully!"
+echo "All essential packages, Anaconda, and Spyder, have been installed successfully!"
