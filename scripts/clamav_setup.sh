@@ -44,15 +44,5 @@ else
     exit 1
 fi
 
-# Display basic usage instructions
-echo "ClamAV installed and configured successfully. Here are some common usage examples:"
-echo -e "\nScan all files from the root directory:\n    clamscan -r /\n"
-echo -e "Scan files but only show infected files:\n    clamscan -r -i /path-to-folder\n"
-echo -e "Scan files but don’t show 'OK' files:\n    clamscan -r -o /path-to-folder\n"
-echo -e "Scan files and save results of infected files:\n    clamscan -r /path-to-folder | grep FOUND >> /path-to-folder/file.txt\n"
-echo -e "Scan files and move infected files to a quarantine folder:\n    clamscan -r --move=/path-to-quarantine-folder /path-to-folder\n"
-
-echo "Check the manual for more options: man clamscan"
-
 echo "✅ Setup complete."
 exit 0

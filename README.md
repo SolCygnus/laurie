@@ -19,11 +19,11 @@ sudo apt install git
 ```
 
 
-📌 After updating, create a snapshot of your VM. A recommended naming convention is:
+📌 After updating, shutdown the VM and create a snapshot. A recommended naming convention is:
 
-    "base-YYYY-MM-DD" (e.g., base-2025-01-29).
+    "base-DATE" (e.g., base-29Jan).
 
-Step 3: Clone the Repository
+### **Step 3: Clone the Repository**
 
 Open a terminal and run:
 
@@ -31,7 +31,7 @@ Open a terminal and run:
 git clone https://github.com/SolCygnus/laurie
 ```
 
-Step 4: Make main.py Executable and Run It
+### **Step 4: Make main.py Executable and Run It**
 
 Run the following commands in the terminal:
 
@@ -40,7 +40,7 @@ chmod +x main.py
 sudo python3 main.py
 ```
 
-📜 Logs and Troubleshooting
+### **📜 Logs and Troubleshooting**
 
 If there are any issues, check the installation log:
 
@@ -48,7 +48,7 @@ If there are any issues, check the installation log:
 ~/laurie/laurie_repo.log
 ```
 
-⚙️ VM Hypervisor Settings
+### **⚙️ VM Hypervisor Settings**
 
 If using VMware:
 

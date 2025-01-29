@@ -6,7 +6,7 @@
 
 ### 🔍 Function: Check if CUDA is installed ###
 check_cuda() {
-    if command -v nvidia-smi &> /dev/null; then
+    if command -v nvidia-smi &>/dev/null; then
         echo "✅ CUDA detected. Checking compatibility..."
         if nvidia-smi | grep -qi cuda; then
             echo "✅ Compatible NVIDIA CUDA installation detected."
@@ -24,60 +24,59 @@ check_cuda() {
 ### 🔧 Function: Install System Dependencies ###
 install_prerequisites() {
     echo "🔄 Updating package list and installing prerequisites..."
-    apt update && apt install -y git python3 python3-pip ffmpeg build-essential
-    if [ $? -ne 0 ]; then
-        echo "❌ Failed to install prerequisites. Exiting."
-        exit 1
+    if ! apt update && apt install -y git python3 python3-pip ffmpeg build-essential; then
+        echo "❌ Failed to install prerequisites."
+    else
+        echo "✅ Prerequisites installed successfully."
     fi
-    echo "✅ Prerequisites installed successfully."
 }
 
 ### 🔧 Function: Install Whisper ###
 install_whisper() {
     echo "🔄 Installing Whisper..."
-    if ! command -v pip &> /dev/null; then
-        echo "❌ Python pip is not installed. Exiting."
-        exit 1
+    if ! command -v pip &>/dev/null; then
+        echo "❌ Python pip is not installed. Skipping Whisper installation."
+        return 1
     fi
 
     pip install --upgrade pip setuptools wheel
-    pip install openai-whisper
-    if [ $? -ne 0 ]; then
-        echo "❌ Failed to install Whisper. Exiting."
-        exit 1
+    if ! pip install openai-whisper; then
+        echo "❌ Failed to install Whisper."
+    else
+        echo "✅ Whisper installed successfully."
     fi
-    echo "✅ Whisper installed successfully."
 }
 
 ### 🔧 Function: Install PyTorch (CUDA) ###
 install_nvidia_pytorch() {
     echo "🔄 Installing PyTorch with CUDA support..."
-    pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
-    if [ $? -ne 0 ]; then
-        echo "❌ Failed to install PyTorch with CUDA support. Exiting."
-        exit 1
+    if ! pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118; then
+        echo "❌ Failed to install PyTorch with CUDA support."
+    else
+        echo "✅ PyTorch with CUDA support installed successfully."
     fi
-    echo "✅ PyTorch with CUDA support installed successfully."
 }
 
 ### 🔧 Function: Install PyTorch (CPU Only) ###
 install_cpu_pytorch() {
     echo "🔄 Installing PyTorch for CPU-only systems..."
-    pip install torch torchvision torchaudio
-    if [ $? -ne 0 ]; then
-        echo "❌ Failed to install CPU-only PyTorch. Exiting."
-        exit 1
+    if ! pip install torch torchvision torchaudio; then
+        echo "❌ Failed to install CPU-only PyTorch."
+    else
+        echo "✅ PyTorch for CPU-only systems installed successfully."
     fi
-    echo "✅ PyTorch for CPU-only systems installed successfully."
 }
 
-### Main Script Execution ###
+### 🔧 Main Script Execution ###
+echo "🚀 Starting Whisper installation process..."
 install_prerequisites
+
 if check_cuda; then
     install_nvidia_pytorch
 else
     install_cpu_pytorch
 fi
+
 install_whisper
 
 echo "🎉 Setup complete. Whisper is now installed."

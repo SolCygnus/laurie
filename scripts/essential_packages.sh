@@ -15,82 +15,112 @@ PACKAGES=(
     "curl"
 )
 
-# Function to set up ProtonVPN repository and install ProtonVPN GUI
+# Function to install a package via APT
+install_package() {
+    local package="$1"
+    if dpkg -s "$package" &>/dev/null; then
+        echo "✅ $package is already installed. Skipping..."
+    else
+        echo "📦 Installing $package..."
+        sudo apt install -y "$package"
+        if [[ $? -eq 0 ]]; then
+            echo "✅ Successfully installed: $package"
+        else
+            echo "❌ Failed to install: $package"
+        fi
+    fi
+}
+
+# Function to install all essential packages
+install_packages() {
+    echo "🔄 Updating package lists..."
+    sudo apt update
+
+    echo "📦 Installing essential packages..."
+    for pkg in "${PACKAGES[@]}"; do
+        install_package "$pkg"
+    done
+}
+
+# Function to set up ProtonVPN repository and install GUI
 setup_protonvpn_gui() {
-    echo "Setting up ProtonVPN repository for GUI..."
+    echo "🌐 Setting up ProtonVPN repository for GUI..."
     wget -q -O - https://repo.protonvpn.com/debian/public_key.asc | sudo gpg --dearmor -o /usr/share/keyrings/protonvpn.asc
     echo "deb [signed-by=/usr/share/keyrings/protonvpn.asc] https://repo.protonvpn.com/debian stable main" | sudo tee /etc/apt/sources.list.d/protonvpn.list
     sudo apt update
-    echo "Installing ProtonVPN GUI..."
-    sudo apt install -y protonvpn protonvpn-gui
+    install_package "protonvpn"
+    install_package "protonvpn-gui"
 }
 
-# Function to Install Shodan Comand Line interface
+# Function to install Shodan CLI
 setup_shodan_cli() {
-    echo "Downloading and Installing Shodan CLI"
+    echo "📡 Installing Shodan CLI..."
     sudo pip3 install -U shodan
-    if [ $? -ne 0 ]; then
-        echo "[ERROR] Failed to install Shodan. Exiting."
-        exit 1
+    if [[ $? -ne 0 ]]; then
+        echo "❌ Failed to install Shodan CLI."
+        return 1
     fi
 
     # Verify installation
-    echo "[INFO] Verifying Shodan installation..."
+    echo "🔍 Verifying Shodan installation..."
     if python3 -m shodan --help &>/dev/null; then
-        echo "[SUCCESS] Shodan installed and verified successfully!"
+        echo "✅ Shodan installed and verified!"
     else
-        echo "[ERROR] Shodan installation verification failed."
-        exit 1
+        echo "❌ Shodan installation verification failed."
+        return 1
     fi
 }
 
 # Function to install Anaconda
 install_anaconda() {
-    echo "Downloading and installing Anaconda..."
+    if command -v conda &>/dev/null; then
+        echo "✅ Anaconda is already installed. Skipping..."
+        return 0
+    fi
+
+    echo "🟢 Downloading and installing Anaconda..."
     wget -O ~/anaconda.sh https://repo.anaconda.com/archive/Anaconda3-latest-Linux-x86_64.sh
-    bash ~/anaconda.sh -b -p $HOME/anaconda3
+    bash ~/anaconda.sh -b -p "$HOME/anaconda3"
     rm ~/anaconda.sh
-    echo "Adding Anaconda to PATH..."
+    echo "🔧 Adding Anaconda to PATH..."
     echo 'export PATH="$HOME/anaconda3/bin:$PATH"' >> ~/.bashrc
     source ~/.bashrc
-    echo "Anaconda installed successfully!"
+    echo "✅ Anaconda installed successfully!"
 }
 
 # Function to install Spyder via Conda
 install_spyder() {
-    echo "Installing Spyder through Anaconda..."
-    if command -v conda > /dev/null; then
+    if command -v spyder &>/dev/null; then
+        echo "✅ Spyder is already installed. Skipping..."
+        return 0
+    fi
+
+    if command -v conda &>/dev/null; then
+        echo "🖥️ Installing Spyder via Anaconda..."
         conda install -y -c conda-forge spyder
-        echo "Spyder installed successfully!"
+        echo "✅ Spyder installed successfully!"
     else
-        echo "Conda is not installed. Skipping Spyder installation."
+        echo "⚠️ Conda is not installed. Skipping Spyder installation."
     fi
 }
 
-# Function to install essential packages using APT
-install_packages() {
-    echo "Updating package lists..."
-    sudo apt update
-
-    echo "Installing essential packages..."
-    sudo apt install -y "${PACKAGES[@]}"
-}
-
 # Main script execution
-echo "Starting package installation for Linux Mint..."
+echo "Starting essential package installation for Linux Mint..."
 
-# Check if running on a Debian-based system
-if ! command -v apt > /dev/null; then
-    echo "This script is intended for Debian-based systems (like Linux Mint)."
+# Ensure script is running on a Debian-based system
+if ! command -v apt &>/dev/null; then
+    echo "❌ This script is intended for Debian-based systems (e.g., Linux Mint). Exiting."
     exit 1
 fi
 
-# Install packages via APT
+# Install all essential packages
 install_packages
 
-# Set up ProtonVPN GUI
+# Setup ProtonVPN GUI (Commented out for now, will return once isssues fixed)
 # setup_protonvpn_gui
-# removing temporarily to resolve install issues. Will revisit function install
+
+# Install Shodan CLI
+setup_shodan_cli
 
 # Install Anaconda
 install_anaconda
@@ -98,4 +128,4 @@ install_anaconda
 # Install Spyder
 install_spyder
 
-echo "All essential packages, Anaconda, and Spyder, have been installed successfully!"
+echo "🎉 All essential packages, Anaconda, and Spyder have been installed!"
