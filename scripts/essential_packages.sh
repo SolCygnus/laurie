@@ -14,6 +14,7 @@ PACKAGES=(
     "exiftool"
     "curl"
     "vlc"
+    "keepassxc"
 )
 
 # Function to install a package via APT
@@ -51,6 +52,12 @@ setup_protonvpn_gui() {
     sudo apt update
     install_package "protonvpn"
     install_package "protonvpn-gui"
+}
+
+# Function to set up Obsidian
+setup_obsidian() {
+    echo "🌐 Setting up Obsidian..."
+    sudo flatpak install flathub md.obsidian.Obsidian
 }
 
 # Function to install Shodan CLI
@@ -129,4 +136,6 @@ install_anaconda
 # Install Spyder
 install_spyder
 
+# Install Obsidian
+setup_obsidian
 echo "🎉 All essential packages, Anaconda, and Spyder have been installed!"

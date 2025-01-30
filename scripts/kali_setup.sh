@@ -6,6 +6,12 @@
 PACKAGES=(
     "recon-ng"
     "sherlock"
+    "metagoofil"
+    "spiderfoot"
+    "holehe"
+    "shodan"
+    "tor"
+    "torbrowser-launcher"
 )
 
 # Backup sources.list
