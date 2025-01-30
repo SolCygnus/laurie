@@ -119,9 +119,6 @@ install_packages
 # Setup ProtonVPN GUI (Commented out for now, will return once isssues fixed)
 # setup_protonvpn_gui
 
-# Install Shodan CLI
-setup_shodan_cli
-
 # Install Anaconda
 install_anaconda
 
