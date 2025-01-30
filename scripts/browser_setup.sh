@@ -92,6 +92,67 @@ install_brave_browser() {
     echo "Brave Browser installed successfully."
 }
 
+### Update and replace default Firefox Profile with ffprofiler harden profile
+
+# Define paths
+FIREFOX_DIR="$HOME/.mozilla/firefox"
+CUSTOM_PROFILE_SRC="/path/to/your/custom-profile"  # Update this path
+
+# Check if Firefox directory exists
+if [[ ! -d "$FIREFOX_DIR" ]]; then
+    echo "❌ Firefox profile directory not found. Ensure Firefox is installed and run it once."
+    exit 1
+fi
+
+# Identify the default profile folder
+DEFAULT_PROFILE=$(grep -oP '(?<=Path=).+' "$FIREFOX_DIR/profiles.ini" | head -n 1)
+DEFAULT_PROFILE_DIR="$FIREFOX_DIR/$DEFAULT_PROFILE"
+
+if [[ ! -d "$DEFAULT_PROFILE_DIR" ]]; then
+    echo "❌ Default profile directory not found."
+    exit 1
+fi
+
+# Define paths dynamically
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"  # Assumes script is inside the repo
+CUSTOM_PROFILE_SRC="$REPO_DIR/misc_files/profile"  # Custom profile location inside the repo
+FIREFOX_DIR="$HOME/.mozilla/firefox"
+
+# Ensure Firefox profile directory exists
+if [[ ! -d "$FIREFOX_DIR" ]]; then
+    echo "❌ Firefox profile directory not found. Ensure Firefox is installed and run it once."
+    exit 1
+fi
+
+# Identify the default profile folder
+DEFAULT_PROFILE=$(grep -oP '(?<=Path=).+' "$FIREFOX_DIR/profiles.ini" | head -n 1)
+DEFAULT_PROFILE_DIR="$FIREFOX_DIR/$DEFAULT_PROFILE"
+
+if [[ ! -d "$DEFAULT_PROFILE_DIR" ]]; then
+    echo "❌ Default profile directory not found."
+    exit 1
+fi
+
+# Backup the existing default profile
+BACKUP_DIR="$HOME/firefox-profile-backup"
+mkdir -p "$BACKUP_DIR"
+cp -r "$DEFAULT_PROFILE_DIR" "$BACKUP_DIR"
+echo "✅ Backup of existing profile saved to $BACKUP_DIR"
+
+# Replace the default profile with the custom one from the repo
+rm -rf "$DEFAULT_PROFILE_DIR"
+cp -r "$CUSTOM_PROFILE_SRC" "$DEFAULT_PROFILE_DIR"
+echo "✅ Custom profile copied from $CUSTOM_PROFILE_SRC to $DEFAULT_PROFILE_DIR"
+
+# Ensure correct ownership
+chown -R "$USER:$USER" "$DEFAULT_PROFILE_DIR"
+
+# Set profile as default in profiles.ini
+PROFILE_NAME=$(basename "$CUSTOM_PROFILE_SRC")
+sed -i "s|Path=.*|Path=$PROFILE_NAME|g" "$FIREFOX_DIR/profiles.ini"
+
+echo "🎉 Firefox profile replaced successfully! Restart Firefox to apply changes."
+
 #Main 
 main() {
     echo "Starting installation process..."

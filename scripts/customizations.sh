@@ -30,41 +30,42 @@ install_xdg_utils() {
     echo "✅ xdg-utils is installed."
 }
 
-# Setup host shared folders
+#!/bin/bash
+
+# Setup host shared folders with symbolic links
 setup_shared_folder() {
     MNT_DIR="/mnt/"
+    DESKTOP_DIR="/home/$SUDO_USER/Desktop"
 
     if [[ ! -d "$MNT_DIR" ]]; then
-        echo "❌ $HGFS_DIR does not exist. Ensure Guest additions is installed and share folder is setup."
+        echo "❌ $MNT_DIR does not exist. Ensure Guest Additions is installed and shared folders are set up."
         return 1
     fi
 
     mkdir -p "$DESKTOP_DIR"
     chown "$SUDO_USER:$SUDO_USER" "$DESKTOP_DIR"
 
-    echo "🔗 Creating shared folder shortcuts..."
+    echo "🔗 Creating shared folder symbolic links..."
     for folder in "$MNT_DIR"/*; do
         if [[ -d "$folder" ]]; then
             folder_name=$(basename "$folder")
-            desktop_file="$DESKTOP_DIR/Host_Share_${folder_name}.desktop"
+            symlink_target="$DESKTOP_DIR/Host_Share_${folder_name}"
 
-            sudo -u "$SUDO_USER" bash -c "cat <<EOL > '$desktop_file'
-[Desktop Entry]
-Name=Host Share - $folder_name
-Comment=Shortcut for access to $folder_name on the host machine
-Exec=xdg-open \"$folder\"
-Icon=folder
-Terminal=false
-Type=Application
-EOL"
+            # Remove existing symlink if it exists
+            [[ -L "$symlink_target" ]] && rm "$symlink_target"
 
-            chmod +x "$desktop_file"
-            chown "$SUDO_USER:$SUDO_USER" "$desktop_file"
-            echo "✅ Shortcut created: $desktop_file"
+            # Create the symbolic link
+            ln -s "$folder" "$symlink_target"
+            chown -h "$SUDO_USER:$SUDO_USER" "$symlink_target"
+            echo "✅ Symlink created: $symlink_target -> $folder"
         fi
     done
-    echo "🎉 Host share shortcuts setup complete!"
+
+    echo "🎉 Host share symlinks setup complete!"
 }
+
+# Run the function
+setup_shared_folder
 
 # Set custom background
 set_background_image() {
@@ -127,20 +128,22 @@ add_favorite_apps() {
     NEW_APPS=("code.desktop" "gnome-terminal.desktop" "google-chrome.desktop" "brave-browser.desktop" "xed.desktop" "gnome-calculator.desktop") 
 
     # Read the current favorite apps
-    CURRENT_FAVORITES=$(sudo -u "$SUDO_USER" dconf read /org/cinnamon/favorite-apps | tr -d "[]'")
+    CURRENT_FAVORITES=$(sudo -u "$SUDO_USER" dconf read /org/cinnamon/favorite-apps)
+    [[ "$CURRENT_FAVORITES" == "null" || -z "$CURRENT_FAVORITES" ]] && CURRENT_FAVORITES="[]"
+    CURRENT_FAVORITES=$(echo "$CURRENT_FAVORITES" | tr -d "[]'")
 
     # Convert to an array
-    IFS=', ' read -r -a FAVORITE_APPS <<< "$CURRENT_FAVORITES"
+    IFS=',' read -r -a FAVORITE_APPS <<< "$CURRENT_FAVORITES"
 
     # Add new apps if they are not already present
     for app in "${NEW_APPS[@]}"; do
-        if [[ ! " ${FAVORITE_APPS[@]} " =~ " ${app} " ]]; then
+        if ! printf '%s\n' "${FAVORITE_APPS[@]}" | grep -qx "$app"; then
             FAVORITE_APPS+=("$app")
         fi
     done
 
     # Convert back to a dconf-compatible string
-    NEW_FAVORITES="['$(IFS=','; echo "${FAVORITE_APPS[*]}")']"
+    NEW_FAVORITES="['$(IFS=','; echo "${FAVORITE_APPS[*]}" | sed "s/,/, /g")']"
 
     # Apply the new favorites
     sudo -u "$SUDO_USER" dconf write /org/cinnamon/favorite-apps "$NEW_FAVORITES"

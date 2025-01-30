@@ -8,6 +8,8 @@ PACKAGES=(
     "sherlock"
     "metagoofil"
     "spiderfoot"
+    "spiderfoot-cli"
+    "Amass"
     "holehe"
     "shodan"
     "tor"
