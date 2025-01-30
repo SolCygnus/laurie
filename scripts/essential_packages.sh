@@ -9,13 +9,11 @@ PACKAGES=(
     "gpg"
     "apt-transport-https"
     "git"
-    "protonvpn"
     "steghide"
     "exiftool"
     "curl"
     "vlc"
     "keepassxc"
-    "python3-shodan"
 )
 
 # Function to install a package via APT
@@ -45,28 +43,22 @@ install_packages() {
     done
 }
 
-# Function to set up ProtonVPN repository and install GUI
-setup_protonvpn_gui() {
-    echo "🌐 Setting up ProtonVPN repository for GUI..."
-    wget -q -O - https://repo.protonvpn.com/debian/public_key.asc | sudo gpg --dearmor -o /usr/share/keyrings/protonvpn.asc
-    echo "deb [signed-by=/usr/share/keyrings/protonvpn.asc] https://repo.protonvpn.com/debian stable main" | sudo tee /etc/apt/sources.list.d/protonvpn.list
-    sudo apt update
-    install_package "protonvpn"
-    install_package "protonvpn-gui"
-}
+# Function to install Shodan
+install_shodan() {
+    echo "📦 Installing Shodan CLI via pip..."
+    pip3 install --upgrade --force-reinstall shodan
 
-# Function to set up Obsidian
-setup_obsidian() {
-    echo "🌐 Setting up Obsidian..."
-    sudo flatpak install flathub md.obsidian.Obsidian
-}
+    # Ensure the correct PATH is used
+    export PATH="$HOME/.local/bin:$PATH"
 
-    # Verify installation
+    # Verify Shodan installation
     echo "🔍 Verifying Shodan installation..."
     if python3 -m shodan --help &>/dev/null; then
         echo "✅ Shodan installed and verified!"
     else
         echo "❌ Shodan installation verification failed."
+        echo "⚠️ If the command 'shodan' is not found, try running:"
+        echo "   export PATH=\"\$HOME/.local/bin:\$PATH\""
         return 1
     fi
 }
@@ -104,8 +96,18 @@ install_spyder() {
     fi
 }
 
+# Function to set up Obsidian
+setup_obsidian() {
+    echo "🌐 Setting up Obsidian..."
+    if ! command -v flatpak &>/dev/null; then
+        echo "❌ Flatpak is not installed. Installing..."
+        sudo apt install -y flatpak
+    fi
+    sudo flatpak install -y flathub md.obsidian.Obsidian
+}
+
 # Main script execution
-echo "Starting essential package installation for Linux Mint..."
+echo "🚀 Starting essential package installation for Linux Mint..."
 
 # Ensure script is running on a Debian-based system
 if ! command -v apt &>/dev/null; then
@@ -116,8 +118,8 @@ fi
 # Install all essential packages
 install_packages
 
-# Setup ProtonVPN GUI (Commented out for now, will return once isssues fixed)
-# setup_protonvpn_gui
+# Install Shodan
+install_shodan
 
 # Install Anaconda
 install_anaconda
@@ -127,4 +129,5 @@ install_spyder
 
 # Install Obsidian
 setup_obsidian
+
 echo "🎉 All essential packages, Anaconda, and Spyder have been installed!"
