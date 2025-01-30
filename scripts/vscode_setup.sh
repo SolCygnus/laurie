@@ -118,7 +118,7 @@ install_vscode_extensions() {
 }
 
 # Main execution
-echo "🚀 Starting Visual Studio Code installation process..."
+echo "Starting Visual Studio Code installation process..."
 update_system
 install_prerequisites
 import_microsoft_gpg_key
