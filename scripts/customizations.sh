@@ -80,8 +80,10 @@ set_background_image() {
         return 1
     fi
 
-    sudo -u "$SUDO_USER" gsettings set org.cinnamon.desktop.background picture-uri "file://$TARGET_PATH"
+    sudo -u "$SUDO_USER" DISPLAY=:0 XDG_RUNTIME_DIR=/run/user/$(id -u $SUDO_USER) \
+    gsettings set org.cinnamon.desktop.background picture-uri "file://$TARGET_PATH"
     sudo -u "$SUDO_USER" gsettings set org.cinnamon.desktop.background picture-options "zoom"
+    cinnamon --replace &
     echo "🖼️ Background set successfully."
 }
 
