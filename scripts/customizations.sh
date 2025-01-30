@@ -32,10 +32,10 @@ install_xdg_utils() {
 
 # Setup host shared folders
 setup_shared_folder() {
-    HGFS_DIR="/mnt/hgfs"
+    MNT_DIR="/mnt/"
 
-    if [[ ! -d "$HGFS_DIR" ]]; then
-        echo "❌ $HGFS_DIR does not exist. Ensure VMware Tools or open-vm-tools are installed."
+    if [[ ! -d "$MNT_DIR" ]]; then
+        echo "❌ $HGFS_DIR does not exist. Ensure Guest additions is installed and share folder is setup."
         return 1
     fi
 
@@ -43,7 +43,7 @@ setup_shared_folder() {
     chown "$SUDO_USER:$SUDO_USER" "$DESKTOP_DIR"
 
     echo "🔗 Creating shared folder shortcuts..."
-    for folder in "$HGFS_DIR"/*; do
+    for folder in "$MNT_DIR"/*; do
         if [[ -d "$folder" ]]; then
             folder_name=$(basename "$folder")
             desktop_file="$DESKTOP_DIR/Host_Share_${folder_name}.desktop"
@@ -85,28 +85,24 @@ set_background_image() {
     echo "🖼️ Background set successfully."
 }
 
-# Set custom Bash prompt
-set_bash_prompt() {
-    SWORD="
+set_terminal_banner() {
+    BASHRC="/home/$SUDO_USER/.bashrc"
+
+    BANNER="
+▬▬ι═════════════ﺤ
+With great power comes great responsibility.
 ▬▬ι═════════════ﺤ
 "
-    QUOTE="With great power comes great responsibility."
-    RED='\[\e[31m\]'
-    GREEN='\[\e[32m\]'
-    WHITE='\[\e[37m\]'
-    RESET='\[\e[0m\]'
-    CUSTOM_PS1="${RED}${SWORD}${WHITE}${QUOTE}\n${GREEN}\u@\h:\w \$ ${RESET}"
 
-    if ! grep -q "CUSTOM_PS1" "$BASHRC"; then
-        echo -e "\n# Custom Bash Prompt" >> "$BASHRC"
-        echo "export PS1='${CUSTOM_PS1//\\/\\\\}'" >> "$BASHRC"
+    # Check if the banner already exists
+    if ! grep -q "With great power comes great responsibility" "$BASHRC"; then
+        echo -e "\n# Custom Terminal Banner" >> "$BASHRC"
+        echo "echo -e \"$BANNER\"" >> "$BASHRC"
         chown "$SUDO_USER:$SUDO_USER" "$BASHRC"
-        echo "✅ Custom prompt added to $BASHRC."
+        echo "✅ Banner added to $BASHRC."
     else
-        echo "ℹ️ Custom prompt already exists in $BASHRC."
+        echo "ℹ️ Banner already exists in $BASHRC."
     fi
-
-    sudo -u "$SUDO_USER" bash -c "source $BASHRC" || echo "ℹ️ Changes will apply on next login."
 }
 
 # Move utilities folder
@@ -155,7 +151,7 @@ echo "Starting setup process..."
 install_xdg_utils
 setup_shared_folder
 set_background_image
-set_bash_prompt
+set_terminal_banner
 move_utilities
 add_favorite_apps
 

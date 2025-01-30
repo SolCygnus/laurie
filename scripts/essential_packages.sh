@@ -56,7 +56,7 @@ setup_protonvpn_gui() {
 # Function to install Shodan CLI
 setup_shodan_cli() {
     echo "📡 Installing Shodan CLI..."
-    sudo pip3 install -U shodan
+    sudo pip3 install -U --user shodan
     if [[ $? -ne 0 ]]; then
         echo "❌ Failed to install Shodan CLI."
         return 1

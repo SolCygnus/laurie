@@ -58,7 +58,6 @@ install_vscode_extensions() {
 
     EXTENSIONS=(
         "ms-python.python"
-        "ms-python.debugger"
         "tao-cumplido.hex-viewer"
         "ms-vscode.hexeditor"
     )
