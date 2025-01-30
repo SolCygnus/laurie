@@ -15,6 +15,7 @@ PACKAGES=(
     "curl"
     "vlc"
     "keepassxc"
+    "python3-shodan"
 )
 
 # Function to install a package via APT
@@ -59,15 +60,6 @@ setup_obsidian() {
     echo "🌐 Setting up Obsidian..."
     sudo flatpak install flathub md.obsidian.Obsidian
 }
-
-# Function to install Shodan CLI
-setup_shodan_cli() {
-    echo "📡 Installing Shodan CLI..."
-    sudo pip3 install -U --user shodan
-    if [[ $? -ne 0 ]]; then
-        echo "❌ Failed to install Shodan CLI."
-        return 1
-    fi
 
     # Verify installation
     echo "🔍 Verifying Shodan installation..."

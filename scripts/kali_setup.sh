@@ -11,7 +11,6 @@ PACKAGES=(
     "spiderfoot-cli"
     "Amass"
     "holehe"
-    "shodan"
     "tor"
     "torbrowser-launcher"
 )

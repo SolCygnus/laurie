@@ -58,6 +58,10 @@ setup_shared_folder() {
             ln -s "$folder" "$symlink_target"
             chown -h "$SUDO_USER:$SUDO_USER" "$symlink_target"
             echo "✅ Symlink created: $symlink_target -> $folder"
+
+            # Add user to vboxsf group
+            sudo usermod -aG vboxsf "$SUDO_USER"
+            echo "User added to vboxsf group"
         fi
     done
 
