@@ -84,6 +84,7 @@ if __name__ == "__main__":
         "vscode_setup.sh",
         "whisper_setup.sh",
         "customizations.sh",
+        "kali_setup.sh",
         "clamav_setup.sh",
         "harden.sh",
     ]
