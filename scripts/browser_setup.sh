@@ -92,9 +92,41 @@ install_brave_browser() {
     echo "Brave Browser installed successfully."
 }
 
+# Function to ensure Firefox is launched at least once to create the profile directory
+initialize_firefox_profile() {
+    FIREFOX_DIR="$HOME/.mozilla/firefox"
+
+    # Check if Firefox profile directory exists
+    if [[ -d "$FIREFOX_DIR" ]]; then
+        echo "✅ Firefox profile directory already exists."
+        return 0
+    fi
+
+    echo "🔄 Launching Firefox to initialize profile..."
+
+    # Launch Firefox in the background and store its PID
+    firefox &>/dev/null &
+    FIREFOX_PID=$!
+
+    # Give it time to create the profile directory
+    sleep 5  # Adjust this delay if necessary
+
+    # Gracefully terminate Firefox
+    kill "$FIREFOX_PID"
+    sleep 2  # Allow process to exit properly
+
+    # Check if profile directory was created
+    if [[ -d "$FIREFOX_DIR" ]]; then
+        echo "✅ Firefox profile directory successfully created."
+        return 0
+    else
+        echo "❌ Failed to initialize Firefox profile directory."
+        return 1
+    fi
+}
+
 # Function to replace the default Firefox profile with a custom one
 replace_firefox_profile() {
-    # Define paths
     FIREFOX_DIR="$HOME/.mozilla/firefox"
     REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"  # Assumes script is inside the repo
     CUSTOM_PROFILE_SRC="$REPO_DIR/misc_files/profile"  # Custom profile location inside the repo
@@ -141,6 +173,7 @@ main() {
 
     install_brave_browser
     install_google_chrome
+    initialize_firefox_profile
     replace_firefox_profile
 
     echo "Continuing with the rest of the script..."
