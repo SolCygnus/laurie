@@ -9,9 +9,9 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 # Determine the non-root user running the script
-SUDO_USER=$(logname)
+REAL_USER=$(logname)
 
-USER_HOME=$(eval echo ~$SUDO_USER)
+USER_HOME=$(eval echo ~$REAL_USER)
 DESKTOP_DIR="$USER_HOME/Desktop"
 BASHRC="$USER_HOME/.bashrc"
 
@@ -30,7 +30,7 @@ install_xdg_utils() {
 # Setup host shared folders with symbolic links
 setup_shared_folder() {
     MNT_DIR="/mnt/"
-    DESKTOP_DIR="/home/$SUDO_USER/Desktop"
+    DESKTOP_DIR="/home/$REAL_USER/Desktop"
 
 #    if [[ ! -d "$MNT_DIR" ]]; then
 #        echo "❌ $MNT_DIR does not exist. Ensure Guest Additions is installed and shared folders are set up."
@@ -38,7 +38,7 @@ setup_shared_folder() {
 #    fi
 #
 #    mkdir -p "$DESKTOP_DIR"
-#    chown "$SUDO_USER:$SUDO_USER" "$DESKTOP_DIR"
+#    chown "$REAL_USER:$REAL_USER" "$DESKTOP_DIR"
 
     echo "🔗 Creating shared folder symbolic links..."
     for folder in "$MNT_DIR"/*; do
@@ -51,11 +51,11 @@ setup_shared_folder() {
 
             # Create the symbolic link
             ln -s "$folder" "$symlink_target"
-            chown -h "$SUDO_USER:$SUDO_USER" "$symlink_target"
+            chown -h "$REAL_USER:$REAL_USER" "$symlink_target"
             echo "✅ Symlink created: $symlink_target -> $folder"
 
             # Add user to vboxsf group
-            usermod -aG vboxsf "$SUDO_USER" #removed sudo. script running as root.
+            usermod -aG vboxsf "$REAL_USER" #removed sudo. script running as root.
             echo "User added to vboxsf group"
         fi
     done
@@ -68,7 +68,7 @@ setup_shared_folder
 
 # Set custom background
 set_background_image() {
-    REPO_DIR="$(git rev-parse --show-toplevel 2>/dev/null || echo "/home/$SUDO_USER/laurie")"
+    REPO_DIR="$(git rev-parse --show-toplevel 2>/dev/null || echo "/home/$REAL_USER/laurie")"
     BACKGROUND_IMAGE="$REPO_DIR/background/E61317.jpg"
     TARGET_PATH="/usr/share/backgrounds/E61317.jpg"
 
@@ -80,15 +80,15 @@ set_background_image() {
         return 1
     fi
 
-    sudo -u "$SUDO_USER" DISPLAY=:0 XDG_RUNTIME_DIR=/run/user/$(id -u $SUDO_USER) \
+    sudo -u "$REAL_USER" DISPLAY=:0 XDG_RUNTIME_DIR=/run/user/$(id -u $REAL_USER) \
     gsettings set org.cinnamon.desktop.background picture-uri "file://$TARGET_PATH"
-    sudo -u "$SUDO_USER" gsettings set org.cinnamon.desktop.background picture-options "zoom"
+    sudo -u "$REAL_USER" gsettings set org.cinnamon.desktop.background picture-options "zoom"
     cinnamon --replace &
     echo "🖼️ Background set successfully."
 }
 
 set_terminal_banner() {
-    BASHRC="/home/$SUDO_USER/.bashrc"
+    BASHRC="/home/$REAL_USER/.bashrc"
 
     BANNER="
 ▬▬ι═════════════ﺤ
@@ -100,7 +100,7 @@ With great power comes great responsibility.
     if ! grep -q "With great power comes great responsibility" "$BASHRC"; then
         echo -e "\n# Custom Terminal Banner" >> "$BASHRC"
         echo "echo -e \"$BANNER\"" >> "$BASHRC"
-        chown "$SUDO_USER:$SUDO_USER" "$BASHRC"
+        chown "$REAL_USER:$REAL_USER" "$BASHRC"
         echo "✅ Banner added to $BASHRC."
     else
         echo "ℹ️ Banner already exists in $BASHRC."
@@ -137,7 +137,7 @@ add_favorite_apps() {
     fi
 
     # Determine the correct user to apply changes
-    TARGET_USER=${SUDO_USER:-$USER}
+    TARGET_USER=${REAL_USER:-$USER}
     if [[ -z "$TARGET_USER" || "$TARGET_USER" == "root" ]]; then
         echo "❌ Cannot modify favorite apps for root. Run as a normal user with sudo."
         return 1

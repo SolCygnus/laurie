@@ -68,7 +68,7 @@ install_cpu_pytorch() {
 }
 
 ### 🔧 Main Script Execution ###
-echo "🚀 Starting Whisper installation process..."
+echo "Starting Whisper installation process..."
 install_prerequisites
 
 if check_cuda; then
