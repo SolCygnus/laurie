@@ -112,14 +112,19 @@ With great power comes great responsibility.
     fi
 }
 
-# Move utilities folder
+# Move utilities folder to /usr/local/bin/
 move_utilities() {
     SOURCE_DIR="$(pwd)/utilities"
-    DEST_DIR="$USER_HOME/Documents"
+    DEST_DIR="/usr/local/bin"
 
     if [[ -d "$SOURCE_DIR" ]]; then
-        mv "$SOURCE_DIR" "$DEST_DIR"
-        chown -R "$SUDO_USER:$SUDO_USER" "$DEST_DIR/utilities"
+        # Move the directory to /usr/local/bin/
+        sudo mv "$SOURCE_DIR" "$DEST_DIR"
+
+        # Set correct permissions (owned by root but executable by everyone)
+        sudo chown -R root:root "$DEST_DIR/utilities"
+        sudo chmod -R 755 "$DEST_DIR/utilities"
+
         echo "✅ 'utilities' moved to $DEST_DIR."
     else
         echo "❌ 'utilities' directory not found!"
