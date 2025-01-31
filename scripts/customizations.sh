@@ -32,19 +32,19 @@ setup_shared_folder() {
     MNT_DIR="/mnt/"
     DESKTOP_DIR="/home/$SUDO_USER/Desktop"
 
-    if [[ ! -d "$MNT_DIR" ]]; then
-        echo "❌ $MNT_DIR does not exist. Ensure Guest Additions is installed and shared folders are set up."
-        return 1
-    fi
-
-    mkdir -p "$DESKTOP_DIR"
-    chown "$SUDO_USER:$SUDO_USER" "$DESKTOP_DIR"
+#    if [[ ! -d "$MNT_DIR" ]]; then
+#        echo "❌ $MNT_DIR does not exist. Ensure Guest Additions is installed and shared folders are set up."
+#        return 1
+#    fi
+#
+#    mkdir -p "$DESKTOP_DIR"
+#    chown "$SUDO_USER:$SUDO_USER" "$DESKTOP_DIR"
 
     echo "🔗 Creating shared folder symbolic links..."
     for folder in "$MNT_DIR"/*; do
         if [[ -d "$folder" ]]; then
             folder_name=$(basename "$folder")
-            symlink_target="$DESKTOP_DIR/Host_Share_${folder_name}"
+            symlink_target="$DESKTOP_DIR/${folder_name}"
 
             # Remove existing symlink if it exists
             [[ -L "$symlink_target" ]] && rm "$symlink_target"
@@ -55,7 +55,7 @@ setup_shared_folder() {
             echo "✅ Symlink created: $symlink_target -> $folder"
 
             # Add user to vboxsf group
-            sudo usermod -aG vboxsf "$SUDO_USER"
+            usermod -aG vboxsf "$SUDO_USER" #removed sudo. script running as root.
             echo "User added to vboxsf group"
         fi
     done
@@ -108,6 +108,8 @@ With great power comes great responsibility.
 }
 
 # Move utilities folder to /usr/local/bin/
+#currently moves whole folder. make sure there are no issues with calling the scripts from /local/bin sub folders.
+
 move_utilities() {
     SOURCE_DIR="$(pwd)/utilities"
     DEST_DIR="/usr/local/bin"
@@ -128,20 +130,35 @@ move_utilities() {
 }
 
 add_favorite_apps() {
+    # Ensure the script is run as root. already performing function at start of script.
+#    if [[ $EUID -ne 0 ]]; then
+#        echo "❌ This script must be run as root (use sudo)."
+#        exit 1
+    fi
+
+    # Determine the correct user to apply changes
+    TARGET_USER=${SUDO_USER:-$USER}
+    if [[ -z "$TARGET_USER" || "$TARGET_USER" == "root" ]]; then
+        echo "❌ Cannot modify favorite apps for root. Run as a normal user with sudo."
+        return 1
+    fi
+
     # Define apps to add
     NEW_APPS=("code.desktop" "gnome-terminal.desktop" "google-chrome.desktop" "brave-browser.desktop" "xed.desktop" "gnome-calculator.desktop") 
 
     # Read the current favorite apps
-    CURRENT_FAVORITES=$(sudo -u "$SUDO_USER" dconf read /org/cinnamon/favorite-apps)
+    CURRENT_FAVORITES=$(sudo -u "$TARGET_USER" dconf read /org/cinnamon/favorite-apps)
     [[ "$CURRENT_FAVORITES" == "null" || -z "$CURRENT_FAVORITES" ]] && CURRENT_FAVORITES="[]"
-    CURRENT_FAVORITES=$(echo "$CURRENT_FAVORITES" | tr -d "[]'")
+
+    # Clean up the list formatting
+    CURRENT_FAVORITES=$(echo "$CURRENT_FAVORITES" | sed -E "s/^\[//; s/\]$//; s/'//g")
 
     # Convert to an array
     IFS=',' read -r -a FAVORITE_APPS <<< "$CURRENT_FAVORITES"
 
-    # Add new apps if they are not already present
+    # Add new apps if not already present
     for app in "${NEW_APPS[@]}"; do
-        if ! printf '%s\n' "${FAVORITE_APPS[@]}" | grep -qx "$app"; then
+        if [[ ! " ${FAVORITE_APPS[*]} " =~ " $app " ]]; then
             FAVORITE_APPS+=("$app")
         fi
     done
@@ -150,10 +167,9 @@ add_favorite_apps() {
     NEW_FAVORITES="['$(IFS=','; echo "${FAVORITE_APPS[*]}" | sed "s/,/, /g")']"
 
     # Apply the new favorites
-    sudo -u "$SUDO_USER" dconf write /org/cinnamon/favorite-apps "$NEW_FAVORITES"
+    sudo -u "$TARGET_USER" dconf write /org/cinnamon/favorite-apps "$NEW_FAVORITES"
 
-    echo "✅ Favorite applications updated: $NEW_FAVORITES"
-}
+    echo "✅ Favorite applications updated for $TARGET_USER: $NEW_FAVORITES"
 
 # Run functions
 echo "Starting setup process..."
