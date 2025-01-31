@@ -29,3 +29,5 @@ No issues - good to go. Need to confirm Python-debugger is installed on platform
 **SCRIPT: whisper_setup.sh**
 Does not work
 
+SUDO_USER and logname $(logname)
+

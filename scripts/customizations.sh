@@ -3,16 +3,13 @@
 # Purpose: Create a host share folder, set a custom background, and update the Bash prompt.
 
 # Ensure script is run as root
-if [[ "$(id -u)" -ne 0 ]]; then
+if [[ $EUID -ne 0 ]]; then
     echo "❌ This script must be run as root (use sudo)."
     exit 1
 fi
 
 # Determine the non-root user running the script
-if [[ -z "$SUDO_USER" ]]; then
-    echo "❌ This script must be run with sudo."
-    exit 1
-fi
+SUDO_USER=$(logname)
 
 USER_HOME=$(eval echo ~$SUDO_USER)
 DESKTOP_DIR="$USER_HOME/Desktop"
@@ -29,8 +26,6 @@ install_xdg_utils() {
     fi
     echo "✅ xdg-utils is installed."
 }
-
-#!/bin/bash
 
 # Setup host shared folders with symbolic links
 setup_shared_folder() {
