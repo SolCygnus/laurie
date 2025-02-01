@@ -1,15 +1,17 @@
 #!/bin/bash
 
-# Purpose: Create a host share folder, set a custom background, and update the Bash prompt.
-
 # Ensure script is run as root
 if [[ $EUID -ne 0 ]]; then
     echo "❌ This script must be run as root (use sudo)."
     exit 1
 fi
 
-# Determine the non-root user running the script
-REAL_USER=$(logname)
+# Determine the non-root user
+REAL_USER=${SUDO_USER:-$(who am i | awk '{print $1}')}
+if [[ -z "$REAL_USER" || "$REAL_USER" == "root" ]]; then
+    echo "❌ Script must be run as sudo but for a non-root user."
+    exit 1
+fi
 
 USER_HOME=$(eval echo ~$REAL_USER)
 DESKTOP_DIR="$USER_HOME/Desktop"
@@ -27,18 +29,14 @@ install_xdg_utils() {
     echo "✅ xdg-utils is installed."
 }
 
-# Setup host shared folders with symbolic links
+# Setup shared folders
 setup_shared_folder() {
     MNT_DIR="/mnt/"
-    DESKTOP_DIR="/home/$REAL_USER/Desktop"
-
-#    if [[ ! -d "$MNT_DIR" ]]; then
-#        echo "❌ $MNT_DIR does not exist. Ensure Guest Additions is installed and shared folders are set up."
-#        return 1
-#    fi
-#
-#    mkdir -p "$DESKTOP_DIR"
-#    chown "$REAL_USER:$REAL_USER" "$DESKTOP_DIR"
+    
+    if [[ ! -d "$MNT_DIR" || -z "$(ls -A "$MNT_DIR")" ]]; then
+        echo "❌ No shared folders found in $MNT_DIR."
+        return 1
+    fi
 
     echo "🔗 Creating shared folder symbolic links..."
     for folder in "$MNT_DIR"/*; do
@@ -46,16 +44,12 @@ setup_shared_folder() {
             folder_name=$(basename "$folder")
             symlink_target="$DESKTOP_DIR/${folder_name}"
 
-            # Remove existing symlink if it exists
             [[ -L "$symlink_target" ]] && rm "$symlink_target"
-
-            # Create the symbolic link
             ln -s "$folder" "$symlink_target"
             chown -h "$REAL_USER:$REAL_USER" "$symlink_target"
             echo "✅ Symlink created: $symlink_target -> $folder"
 
-            # Add user to vboxsf group
-            usermod -aG vboxsf "$REAL_USER" #removed sudo. script running as root.
+            usermod -aG vboxsf "$REAL_USER"
             echo "User added to vboxsf group"
         fi
     done
@@ -65,7 +59,10 @@ setup_shared_folder() {
 
 # Set custom background
 set_background_image() {
-    REPO_DIR="$(git rev-parse --show-toplevel 2>/dev/null || echo "/home/$REAL_USER/laurie")"
+    REPO_DIR="/home/$REAL_USER/laurie"
+    if git rev-parse --show-toplevel &>/dev/null; then
+        REPO_DIR=$(git rev-parse --show-toplevel)
+    fi
     BACKGROUND_IMAGE="$REPO_DIR/background/E61317.jpg"
     TARGET_PATH="/usr/share/backgrounds/E61317.jpg"
 
@@ -76,24 +73,22 @@ set_background_image() {
         echo "❌ Background image not found: $BACKGROUND_IMAGE."
         return 1
     fi
-
+    sudo chmod 644 $TARGET_PATH
+    chown "$REAL_USER:$REAL_USER" "$TARGET_PATH"
     sudo -u "$REAL_USER" DISPLAY=:0 XDG_RUNTIME_DIR=/run/user/$(id -u $REAL_USER) \
     gsettings set org.cinnamon.desktop.background picture-uri "file://$TARGET_PATH"
     sudo -u "$REAL_USER" gsettings set org.cinnamon.desktop.background picture-options "zoom"
     cinnamon --replace &
     echo "🖼️ Background set successfully."
 }
-#set terminal banner function
-set_terminal_banner() {
-    BASHRC="/home/$REAL_USER/.bashrc"
 
+# Set terminal banner
+set_terminal_banner() {
     BANNER="
 ▬▬ι═════════════ﺤ
 With great power comes great responsibility.
 ▬▬ι═════════════ﺤ
 "
-
-    # Check if the banner already exists
     if ! grep -q "With great power comes great responsibility" "$BASHRC"; then
         echo -e "\n# Custom Terminal Banner" >> "$BASHRC"
         echo "echo -e \"$BANNER\"" >> "$BASHRC"
@@ -104,69 +99,78 @@ With great power comes great responsibility.
     fi
 }
 
-# Move utilities folder to /usr/local/bin/
-#currently moves whole folder. make sure there are no issues with calling the scripts from /local/bin sub folders.
-
+#Move utilities to /usr/local/bin for global accessaility
 move_utilities() {
     SOURCE_DIR="$(pwd)/utilities"
     DEST_DIR="/usr/local/bin"
 
-    if [[ -d "$SOURCE_DIR" ]]; then
-        # Move the directory to /usr/local/bin/
-        sudo mv "$SOURCE_DIR" "$DEST_DIR"
-
-        # Set correct permissions (owned by root but executable by everyone)
-        sudo chown -R root:root "$DEST_DIR/utilities"
-        sudo chmod -R 755 "$DEST_DIR/utilities"
-
-        echo "✅ 'utilities' moved to $DEST_DIR."
-    else
+    if [[ ! -d "$SOURCE_DIR" ]]; then
         echo "❌ 'utilities' directory not found!"
         return 1
     fi
-}
 
-add_favorite_apps() {
-    # Ensure the script is run as root. already performing function at start of script.
-#    if [[ $EUID -ne 0 ]]; then
-#        echo "❌ This script must be run as root (use sudo)."
-#        exit 1
-    fi
+    echo "Moving utilities to $DEST_DIR..."
 
-    # Determine the correct user to apply changes
-    TARGET_USER=${REAL_USER:-$USER}
-    if [[ -z "$TARGET_USER" || "$TARGET_USER" == "root" ]]; then
-        echo "❌ Cannot modify favorite apps for root. Run as a normal user with sudo."
-        return 1
-    fi
+    # Loop through all files in the utilities directory
+    for file in "$SOURCE_DIR"/*; do
+        if [[ -f "$file" ]]; then
+            filename=$(basename "$file")
+            target_path="$DEST_DIR/$filename"
 
-    # Define apps to add
-    NEW_APPS=("code.desktop" "gnome-terminal.desktop" "google-chrome.desktop" "brave-browser.desktop" "xed.desktop" "gnome-calculator.desktop") 
+            # Move the file
+            sudo mv "$file" "$target_path"
 
-    # Read the current favorite apps
-    CURRENT_FAVORITES=$(sudo -u "$TARGET_USER" dconf read /org/cinnamon/favorite-apps)
-    [[ "$CURRENT_FAVORITES" == "null" || -z "$CURRENT_FAVORITES" ]] && CURRENT_FAVORITES="[]"
+            # Set correct ownership and permissions
+            sudo chown root:root "$target_path"
+            sudo chmod 755 "$target_path"
 
-    # Clean up the list formatting
-    CURRENT_FAVORITES=$(echo "$CURRENT_FAVORITES" | sed -E "s/^\[//; s/\]$//; s/'//g")
-
-    # Convert to an array
-    IFS=',' read -r -a FAVORITE_APPS <<< "$CURRENT_FAVORITES"
-
-    # Add new apps if not already present
-    for app in "${NEW_APPS[@]}"; do
-        if [[ ! " ${FAVORITE_APPS[*]} " =~ " $app " ]]; then
-            FAVORITE_APPS+=("$app")
+            echo "✅ Moved and set executable: $target_path"
         fi
     done
 
-    # Convert back to a dconf-compatible string
-    NEW_FAVORITES="['$(IFS=','; echo "${FAVORITE_APPS[*]}" | sed "s/,/, /g")']"
+    echo "🎉 All utilities are now globally available!"
+}
 
-    # Apply the new favorites
-    sudo -u "$TARGET_USER" dconf write /org/cinnamon/favorite-apps "$NEW_FAVORITES"
+add_apps_to_desktop() {
+    TARGET_USER=${REAL_USER:-$USER}
+    USER_DESKTOP="/home/$TARGET_USER/Desktop"
 
-    echo "✅ Favorite applications updated for $TARGET_USER: $NEW_FAVORITES"
+    if [[ -z "$TARGET_USER" || "$TARGET_USER" == "root" ]]; then
+        echo "❌ Cannot modify desktop for root. Run as a normal user with sudo."
+        return 1
+    fi
+
+    # Ensure the Desktop directory exists
+    mkdir -p "$USER_DESKTOP"
+
+    # Define applications to add (These must exist in /usr/share/applications/)
+    APPS=("code.desktop" "gnome-terminal.desktop" "google-chrome.desktop" "brave-browser.desktop" "xed.desktop" "gnome-calculator.desktop") 
+
+    echo "📌 Adding applications to the Desktop..."
+
+    for app in "${APPS[@]}"; do
+        SRC_FILE="/usr/share/applications/$app"
+        DEST_FILE="$USER_DESKTOP/$app"
+
+        if [[ -f "$SRC_FILE" ]]; then
+            # Copy the .desktop file to the Desktop
+            cp "$SRC_FILE" "$DEST_FILE"
+
+            # Ensure the file is owned by the user
+            chown "$TARGET_USER:$TARGET_USER" "$DEST_FILE"
+
+            # Make it executable so it appears as an application shortcut
+            chmod +x "$DEST_FILE"
+
+            echo "✅ Added $app to the Desktop."
+        else
+            echo "⚠️ $app not found in /usr/share/applications/"
+        fi
+    done
+
+    echo "🎉 All requested applications have been added to the Desktop!"
+}
+
 
 # Run functions
 echo "Starting setup process..."
@@ -175,7 +179,7 @@ setup_shared_folder
 set_background_image
 set_terminal_banner
 move_utilities
-add_favorite_apps
+add_apps_to_desktop
 
 echo "✅ Setup process complete!"
 exit 0
