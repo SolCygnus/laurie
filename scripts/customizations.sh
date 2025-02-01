@@ -197,8 +197,8 @@ setup_expiration_check() {
     SYSTEMD_SERVICE="/etc/systemd/system/expiration-check.service"
 
     # Define repo locations (Update these paths based on your repository structure)
-    REPO_EXPIRATION_SCRIPT="./check_expiration.sh"
-    REPO_SYSTEMD_SERVICE="./expiration-check.service"
+    REPO_EXPIRATION_SCRIPT="../misc_files/check_expiration.sh"
+    REPO_SYSTEMD_SERVICE="../misc_files/expiration-check.service"
 
     # Store install date
     echo "Storing installation date..."
