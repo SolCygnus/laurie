@@ -63,9 +63,6 @@ setup_shared_folder() {
     echo "🎉 Host share symlinks setup complete!"
 }
 
-# Run the function
-setup_shared_folder
-
 # Set custom background
 set_background_image() {
     REPO_DIR="$(git rev-parse --show-toplevel 2>/dev/null || echo "/home/$REAL_USER/laurie")"
@@ -86,7 +83,7 @@ set_background_image() {
     cinnamon --replace &
     echo "🖼️ Background set successfully."
 }
-
+#set terminal banner function
 set_terminal_banner() {
     BASHRC="/home/$REAL_USER/.bashrc"
 
