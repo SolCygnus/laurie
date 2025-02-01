@@ -8,6 +8,7 @@ launching firefox and graceful closing to create local .mozilla folder. This fol
 Currently only setup for virtualbox. Could remove this function and create own script to allow to expand discrenent between virtualbox or vmware.
 creating shared folder link. 
 vbosxsf group will not show until reboot.
+Update locations for expiration files
 
 
 **SCRIPT: essential_packages.sh**

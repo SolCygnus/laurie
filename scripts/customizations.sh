@@ -188,6 +188,50 @@ add_apps_to_desktop() {
     echo "🎉 All requested applications have been added to $USER_DESKTOP!"
 }
 
+setup_expiration_check() {
+    echo "Setting up system expiration check..."
+
+    # Define paths
+    INSTALL_DATE_FILE="/etc/install_date"
+    EXPIRATION_SCRIPT="/usr/local/bin/check_expiration.sh"
+    SYSTEMD_SERVICE="/etc/systemd/system/expiration-check.service"
+
+    # Define repo locations (Update these paths based on your repository structure)
+    REPO_EXPIRATION_SCRIPT="./check_expiration.sh"
+    REPO_SYSTEMD_SERVICE="./expiration-check.service"
+
+    # Store install date
+    echo "Storing installation date..."
+    date +%s > "$INSTALL_DATE_FILE"
+
+    # Move the expiration check script
+    if [[ -f "$REPO_EXPIRATION_SCRIPT" ]]; then
+        echo "Moving expiration script to /usr/local/bin/..."
+        mv "$REPO_EXPIRATION_SCRIPT" "$EXPIRATION_SCRIPT"
+        chmod +x "$EXPIRATION_SCRIPT"
+    else
+        echo "Error: Expiration script not found in repo."
+        return 1
+    fi
+
+    # Move the systemd service file
+    if [[ -f "$REPO_SYSTEMD_SERVICE" ]]; then
+        echo "Moving systemd service file to /etc/systemd/system/..."
+        mv "$REPO_SYSTEMD_SERVICE" "$SYSTEMD_SERVICE"
+    else
+        echo "Error: Systemd service file not found in repo."
+        return 1
+    fi
+
+    # Reload systemd, enable and start service
+    echo "Enabling and starting the expiration-check service..."
+    systemctl daemon-reload
+    systemctl enable expiration-check.service
+    systemctl start expiration-check.service
+
+    echo "System expiration setup complete."
+}
+
 # Run functions
 echo "Starting setup process..."
 install_xdg_utils
@@ -196,6 +240,7 @@ set_background_image
 set_terminal_banner
 move_utilities
 add_apps_to_desktop
+setup_expiration_check
 
 echo "✅ Setup process complete!"
 exit 0
