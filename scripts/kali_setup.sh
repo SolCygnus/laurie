@@ -13,6 +13,7 @@ PACKAGES=(
     "torbrowser-launcher"
     "theharvester"
     "obsidian"
+    "shodan"
 )
 
 # Backup sources.list
