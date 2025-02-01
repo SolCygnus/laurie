@@ -30,4 +30,8 @@ No issues - good to go. Need to confirm Python-debugger is installed on platform
 Does not work
 
 SUDO_USER and logname $(logname)
+logname broke customization script. reverted to SUDO_USER variable held during sudo execution.
 
+OVERALL: 
+Every function should have an overall echo for starting setup and overall success/fail echo at the end. 
+create txt document that has synopsis of installs and things performed to system. Include main.py appending from the log all success/fail entries 

@@ -1,4 +1,5 @@
 #!/bin/bash
+#v2
 
 # Ensure script is run as root
 if [[ $EUID -ne 0 ]]; then
@@ -132,45 +133,58 @@ move_utilities() {
 }
 
 add_apps_to_desktop() {
-    TARGET_USER=${REAL_USER:-$USER}
-    USER_DESKTOP="/home/$TARGET_USER/Desktop"
+    # Determine the real user, fallback to $SUDO_USER if running with sudo
+    TARGET_USER=${REAL_USER:-${SUDO_USER:-$USER}}
 
-    if [[ -z "$TARGET_USER" || "$TARGET_USER" == "root" ]]; then
-        echo "❌ Cannot modify desktop for root. Run as a normal user with sudo."
+    # Get the user's Desktop directory (handles non-standard locations)
+    USER_DESKTOP=$(sudo -u "$TARGET_USER" xdg-user-dir DESKTOP 2>/dev/null)
+    USER_DESKTOP=${USER_DESKTOP:-"/home/$TARGET_USER/Desktop"}
+
+    # Prevent running as root
+    if [[ "$TARGET_USER" == "root" || -z "$TARGET_USER" ]]; then
+        echo "❌ Cannot modify the desktop for root. Run as a normal user with sudo."
         return 1
     fi
 
     # Ensure the Desktop directory exists
-    mkdir -p "$USER_DESKTOP"
+    sudo -u "$TARGET_USER" mkdir -p "$USER_DESKTOP"
 
-    # Define applications to add (These must exist in /usr/share/applications/)
-    APPS=("code.desktop" "gnome-terminal.desktop" "google-chrome.desktop" "brave-browser.desktop" "xed.desktop" "gnome-calculator.desktop") 
+    # Define applications to add (must exist in /usr/share/applications/)
+    APPS=(
+        "brave-browser.desktop"
+        "code.desktop"
+        "firefox.desktop"
+        "gufw.desktop"
+        "libreoffice-calc.desktop"
+        "lynis.desktop"
+        "org.gnome.Calculator.desktop"
+        "org.gnome.Calendar.desktop"
+        "org.gnome.Terminal.desktop"
+        "org.keepassxc.KeePassXC.desktop"
+        "org.x.editor.desktop"
+        "torbrowser.desktop"
+        "vlc.desktop"
+        "google-chrome.desktop"
+    )
 
-    echo "📌 Adding applications to the Desktop..."
+    echo "📌 Adding applications to the Desktop for user: $TARGET_USER..."
 
     for app in "${APPS[@]}"; do
         SRC_FILE="/usr/share/applications/$app"
         DEST_FILE="$USER_DESKTOP/$app"
 
         if [[ -f "$SRC_FILE" ]]; then
-            # Copy the .desktop file to the Desktop
-            cp "$SRC_FILE" "$DEST_FILE"
+            # Use install to copy and set ownership/permissions
+            install -m 755 -o "$TARGET_USER" -g "$TARGET_USER" "$SRC_FILE" "$DEST_FILE"
 
-            # Ensure the file is owned by the user
-            chown "$TARGET_USER:$TARGET_USER" "$DEST_FILE"
-
-            # Make it executable so it appears as an application shortcut
-            chmod +x "$DEST_FILE"
-
-            echo "✅ Added $app to the Desktop."
+            echo "✅ Added $app to $USER_DESKTOP."
         else
-            echo "⚠️ $app not found in /usr/share/applications/"
+            echo "⚠️ Warning: $app not found in /usr/share/applications/"
         fi
     done
 
-    echo "🎉 All requested applications have been added to the Desktop!"
+    echo "🎉 All requested applications have been added to $USER_DESKTOP!"
 }
-
 
 # Run functions
 echo "Starting setup process..."

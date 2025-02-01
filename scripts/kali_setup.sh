@@ -9,10 +9,12 @@ PACKAGES=(
     "metagoofil"
     "spiderfoot"
     "spiderfoot-cli"
-    "Amass"
+    "amass"
     "holehe"
     "tor"
     "torbrowser-launcher"
+    "cutycapt"
+    "theharvester"
 )
 
 # Backup sources.list

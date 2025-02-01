@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # Author: SillyPenguin
 # Date: 29 Jan 25
 # Purpose: Main.py to install necessary packages (bash scripts) and custom build Linux Mint for open-source research

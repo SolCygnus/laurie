@@ -1,4 +1,5 @@
 #!/bin/bash
+#v2
 
 # List of essential packages for Linux Mint
 PACKAGES=(
