@@ -15,6 +15,7 @@ PACKAGES=(
     "curl"
     "vlc"
     "keepassxc"
+    "obsidian"
 )
 
 # Function to install a package via APT
@@ -98,13 +99,13 @@ install_spyder() {
 }
 
 # Function to set up Obsidian
-setup_obsidian() {
-    echo "🌐 Setting up Obsidian..."
-    if ! command -v flatpak &>/dev/null; then
-        echo "❌ Flatpak is not installed. Installing..."
-        sudo apt install -y flatpak
-    fi
-    sudo flatpak install -y flathub md.obsidian.Obsidian
+#setup_obsidian() {
+#    echo "🌐 Setting up Obsidian..."
+#    if ! command -v flatpak &>/dev/null; then
+#        echo "❌ Flatpak is not installed. Installing..."
+#        sudo apt install -y flatpak
+#    fi
+#    sudo flatpak install -y flathub md.obsidian.Obsidian
 }
 
 # Main script execution
@@ -129,6 +130,6 @@ install_anaconda
 install_spyder
 
 # Install Obsidian
-setup_obsidian
+#setup_obsidian
 
 echo "🎉 All essential packages, Anaconda, and Spyder have been installed!"

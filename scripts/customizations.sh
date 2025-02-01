@@ -165,6 +165,8 @@ add_apps_to_desktop() {
         "torbrowser.desktop"
         "vlc.desktop"
         "google-chrome.desktop"
+        "torbrowser.desktop"
+        "obsidian.desktop"
     )
 
     echo "📌 Adding applications to the Desktop for user: $TARGET_USER..."
