@@ -106,7 +106,7 @@ install_spyder() {
 #        sudo apt install -y flatpak
 #    fi
 #    sudo flatpak install -y flathub md.obsidian.Obsidian
-}
+#}
 
 # Main script execution
 echo "🚀 Starting essential package installation for Linux Mint..."
