@@ -10,10 +10,8 @@ PACKAGES=(
     "spiderfoot"
     "spiderfoot-cli"
     "amass"
-    "holehe"
     "tor"
     "torbrowser-launcher"
-    "cutycapt"
     "theharvester"
 )
 
