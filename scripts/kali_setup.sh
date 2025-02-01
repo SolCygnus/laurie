@@ -8,11 +8,11 @@ PACKAGES=(
     "sherlock"
     "metagoofil"
     "spiderfoot"
-    "spiderfoot-cli"
     "amass"
     "tor"
     "torbrowser-launcher"
     "theharvester"
+    "obsidian"
 )
 
 # Backup sources.list

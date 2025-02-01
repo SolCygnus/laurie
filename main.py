@@ -85,14 +85,23 @@ if __name__ == "__main__":
         "browser_setup.sh",
         "vscode_setup.sh",
         "whisper_setup.sh",
-        "customizations.sh",
         "kali_setup.sh",
+        "customizations.sh",
         "clamav_setup.sh",
         "harden.sh",
     ]
 
+    success = True
+
     for script in SCRIPTS:
         run_bash_script(script)
+        if not os.path.exists(os.path.join(SCRIPTS_DIR, script)):
+            success = False  # If any script fails, do not proceed to show README
 
-    print("✅ All scripts executed. Check log for details. Welcome to the Jungle!")
-    logging.info("All scripts executed successfully.")
+    if success:
+        print("✅ All scripts executed. Check log for details. Welcome to the Jungle!")
+        logging.info("All scripts executed successfully.Launching README...")
+        run_bash_script("show_readme.sh")
+    else:
+        print("❌ Some scripts failed. Skipping README.")
+        logging.warning("Some scripts failed. Skipping README.")

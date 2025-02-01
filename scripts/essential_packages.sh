@@ -15,7 +15,6 @@ PACKAGES=(
     "curl"
     "vlc"
     "keepassxc"
-    "obsidian"
 )
 
 # Function to install a package via APT
