@@ -1,8 +1,6 @@
 #!/bin/bash
 
 # Script to install and set up Visual Studio Code with extensions
-# Author: SillyPenguin
-# Date: 25 January 2025
 
 # Function to update package lists
 update_system() {

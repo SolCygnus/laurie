@@ -16,14 +16,14 @@ else
 fi
 
 # Open README.txt with the default text editor
-if command -v xdg-open &>/dev/null; then
-    xdg-open "$README_DEST"
-elif command -v gnome-text-editor &>/dev/null; then
-    gnome-text-editor "$README_DEST"
-elif command -v nano &>/dev/null; then
-    nano "$README_DEST"
-else
-    echo "⚠ No suitable text editor found to open README.txt."
+#if command -v xdg-open &>/dev/null; then
+xdg-open "$README_DEST"
+#elif command -v gnome-text-editor &>/dev/null; then
+#   gnome-text-editor "$README_DEST"
+#elif command -v nano &>/dev/null; then
+#    nano "$README_DEST"
+#else
+#    echo "⚠ No suitable text editor found to open README.txt."
 fi
 
 exit 0

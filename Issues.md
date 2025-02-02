@@ -13,8 +13,7 @@ Update locations for expiration files
 
 **SCRIPT: essential_packages.sh**
 
-still having issues installing shodan through the script. process works with the standard apt install on the system. root to sudo_user issue.
-having an issue installing obsidian. works through commandline and appears to be pulling from kali-rolling. may need separate function and specify apt-get install -t kali-rolling obsidian -y
+Good to go
 
 **SCRIPT: harden.sh**
 

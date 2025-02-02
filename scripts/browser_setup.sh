@@ -1,8 +1,6 @@
 #!/bin/bash
 
 # Script to install and set up web browsers (Google Chrome and Brave) on a Linux system.
-# Author: SillyPenguin
-# Date: 25 Jan 25
 
 # Check for root privileges
 if [[ $EUID -ne 0 ]]; then
@@ -74,67 +72,14 @@ install_brave_browser() {
     echo "Brave Browser installed successfully."
 }
 
-# Initialize Firefox profile
-REAL_USER=$(logname)
-USER_HOME=$(eval echo ~$REAL_USER)
-initialize_firefox_profile() {
-    FIREFOX_DIR="$USER_HOME/.mozilla/firefox"
-    if [[ -d "$FIREFOX_DIR" ]]; then
-        echo "✅ Firefox profile directory already exists."
-        return 0
-    fi
-    echo "🔄 Launching Firefox to initialize profile..."
-    runuser -l "$REAL_USER" -c "firefox &>/dev/null &"
-    FIREFOX_PID=$!
-    sleep 5
-    kill "$FIREFOX_PID"
-    sleep 2
-    if [[ -d "$FIREFOX_DIR" ]]; then
-        echo "✅ Firefox profile directory successfully created."
-        return 0
-    else
-        echo "❌ Failed to initialize Firefox profile directory."
-        return 1
-    fi
-}
-
-# Replace default Firefox profile
-replace_firefox_profile() {
-    FIREFOX_DIR="$USER_HOME/.mozilla/firefox"
-    REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
-    CUSTOM_PROFILE_SRC="$REPO_DIR/misc_files/profile"
-    BACKUP_DIR="$tmp_home/firefox-profile-backup"
-    if [[ ! -d "$FIREFOX_DIR" ]]; then
-        echo "❌ Firefox profile directory not found. Ensure Firefox is installed and run it once."
-        return 1
-    fi
-    DEFAULT_PROFILE=$(grep -oP '(?<=Path=).+' "$FIREFOX_DIR/profiles.ini" | head -n 1)
-    DEFAULT_PROFILE_DIR="$FIREFOX_DIR/$DEFAULT_PROFILE"
-    if [[ ! -d "$DEFAULT_PROFILE_DIR" ]]; then
-        echo "❌ Default profile directory not found."
-        return 1
-    fi
-    mkdir -p "$BACKUP_DIR"
-    cp -r "$DEFAULT_PROFILE_DIR" "$BACKUP_DIR"
-    echo "✅ Backup of existing profile saved to $BACKUP_DIR"
-    rm -rf "$DEFAULT_PROFILE_DIR"
-    cp -r "$CUSTOM_PROFILE_SRC" "$DEFAULT_PROFILE_DIR"
-    echo "✅ Custom profile copied from $CUSTOM_PROFILE_SRC to $DEFAULT_PROFILE_DIR"
-    chown -R "$REAL_USER:$REAL_USER" "$DEFAULT_PROFILE_DIR"
-    PROFILE_NAME=$(basename "$CUSTOM_PROFILE_SRC")
-    sed -i "s|Path=.*|Path=$PROFILE_NAME|g" "$FIREFOX_DIR/profiles.ini"
-    echo "🎉 Firefox profile replaced successfully! Restart Firefox to apply changes."
-}
-
 # Main function
 main() {
     echo "Starting installation process..."
     install_brave_browser
     install_google_chrome
-    initialize_firefox_profile
-    replace_firefox_profile
     echo "Continuing with the rest of the script..."
 }
 
 main
 exit 0
+

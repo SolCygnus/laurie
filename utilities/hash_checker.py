@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Author: SillyPenguin
 
 import hashlib
 import argparse

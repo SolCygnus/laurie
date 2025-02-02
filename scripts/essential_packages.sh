@@ -1,5 +1,5 @@
 #!/bin/bash
-#v2
+#v3
 
 # List of essential packages for Linux Mint
 PACKAGES=(
@@ -44,26 +44,6 @@ install_packages() {
     done
 }
 
-# Function to install Shodan
-install_shodan() {
-    echo "📦 Installing Shodan CLI via pip..."
-    pip3 install --upgrade --force-reinstall shodan
-
-    # Ensure the correct PATH is used
-    export PATH="$HOME/.local/bin:$PATH"
-
-    # Verify Shodan installation
-    echo "🔍 Verifying Shodan installation..."
-    if python3 -m shodan --help &>/dev/null; then
-        echo "✅ Shodan installed and verified!"
-    else
-        echo "❌ Shodan installation verification failed."
-        echo "⚠️ If the command 'shodan' is not found, try running:"
-        echo "   export PATH=\"\$HOME/.local/bin:\$PATH\""
-        return 1
-    fi
-}
-
 # Function to install Anaconda
 install_anaconda() {
     if command -v conda &>/dev/null; then
@@ -97,18 +77,8 @@ install_spyder() {
     fi
 }
 
-# Function to set up Obsidian
-#setup_obsidian() {
-#    echo "🌐 Setting up Obsidian..."
-#    if ! command -v flatpak &>/dev/null; then
-#        echo "❌ Flatpak is not installed. Installing..."
-#        sudo apt install -y flatpak
-#    fi
-#    sudo flatpak install -y flathub md.obsidian.Obsidian
-#}
-
 # Main script execution
-echo "🚀 Starting essential package installation for Linux Mint..."
+echo "Starting essential package installation for Linux Mint..."
 
 # Ensure script is running on a Debian-based system
 if ! command -v apt &>/dev/null; then
@@ -127,8 +97,5 @@ install_anaconda
 
 # Install Spyder
 install_spyder
-
-# Install Obsidian
-#setup_obsidian
 
 echo "🎉 All essential packages, Anaconda, and Spyder have been installed!"

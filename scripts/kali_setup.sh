@@ -14,6 +14,7 @@ PACKAGES=(
     "theharvester"
     "obsidian"
     "shodan"
+    "sqlitebrowser"
 )
 
 # Backup sources.list

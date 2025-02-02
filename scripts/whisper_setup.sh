@@ -1,8 +1,6 @@
 #!/bin/bash
 
 # Whisper Installation Script
-# Author: SillyPenguin
-# Date: 25 January 2025
 
 ### 🔍 Function: Check if CUDA is installed ###
 check_cuda() {

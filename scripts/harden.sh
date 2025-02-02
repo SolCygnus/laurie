@@ -1,6 +1,4 @@
 #!/bin/bash
-# Author: SillyPenguin
-# Date: 25 January 2025
 
 # Function to update and upgrade the system
 update_system() {
