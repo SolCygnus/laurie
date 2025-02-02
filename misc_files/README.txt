@@ -1,8 +1,14 @@
 + Created for OSR purposes and everyday driving a virtual machine on Virtualbox.
 
 
+RECOMMENDED TO DO:
+Open Firefox and close it
+Open Google Chrome and close it. Pay attention to not select sharing of usage statistics.
+Open a terminal and run the script browser_config.sh. It is located in laurie/utilities. open a terminal in that location and 
+type: ./browser_config.sh
+This will update bookmarks for both browsers and profile settings for firefox.
 
-
+**Ensure your set to Bi-directional sharing with clipboard
 
 
 

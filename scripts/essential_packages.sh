@@ -89,9 +89,6 @@ fi
 # Install all essential packages
 install_packages
 
-# Install Shodan
-install_shodan
-
 # Install Anaconda
 install_anaconda
 
