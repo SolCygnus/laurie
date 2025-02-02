@@ -31,6 +31,9 @@ Open a terminal and run:
 git clone https://github.com/SolCygnus/laurie
 ```
 
+NOTE: when you first open a terminal you are in your home folder. This is where you want need to execute this script. If you clone the repo 
+to another folder or within Documents folder installs will fail.
+
 ### **Step 4: Make main.py Executable and Run It**
 
 Run the following commands in the terminal:

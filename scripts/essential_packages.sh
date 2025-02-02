@@ -95,4 +95,4 @@ install_anaconda
 # Install Spyder
 install_spyder
 
-echo "🎉 All essential packages, Anaconda, and Spyder have been installed!"
+echo "🎉 All essential packages have been installed!"

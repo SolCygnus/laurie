@@ -151,7 +151,7 @@ install_lynis() {
 }
 
 # Main execution
-echo "🚀 Starting Linux hardening process..."
+echo "Starting Linux hardening process..."
 update_system
 disable_services
 remove_update_notifier

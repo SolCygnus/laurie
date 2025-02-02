@@ -4,7 +4,7 @@
 REPO_ROOT="$(dirname "$0")/.."  # Move up one level from scripts/
 MISC_DIR="$REPO_ROOT/misc_files"
 README_SRC="$MISC_DIR/README.txt"
-README_DEST="$HOME/README.txt"
+README_DEST="$HOME/Desktop/README.txt"
 
 # Ensure README.txt exists before moving
 if [ -f "$README_SRC" ]; then

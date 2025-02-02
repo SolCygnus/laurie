@@ -1,5 +1,6 @@
 + Created for OSR purposes and everyday driving a virtual machine on Virtualbox.
 
+REBOOT The system for Shared folder 
 
 RECOMMENDED TO DO:
 Open Firefox and close it
@@ -8,8 +9,12 @@ Open a terminal and run the script browser_config.sh. It is located in laurie/ut
 type: ./browser_config.sh
 This will update bookmarks for both browsers and profile settings for firefox.
 
-**Ensure your set to Bi-directional sharing with clipboard
+For everyday driving and use feel free to use the shared folder created and enable bi-directional sharing. For sensitive investigations
+ensure sandboxing by disabling these features and removing the share folder access.
 
+VirtualBox Toolbar - Devices
+Shared clipboard - set to bidirectional
+Drag and Drop - set to bidirectional 
 
 
 
