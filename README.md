@@ -11,7 +11,7 @@ Download and install **Linux Mint 22.1 Cinnamon** in your preferred hypervisor.
 Recommend 8GB Ram and 4 CPU Processors
 
 ---
-### **Step 2: Limux Mint Install**
+### **Step 2: Linux Mint Install**
 
 Boot up your new VM. Once logged in click the Install Linux Mint CD Rom. Follow the interactive prompts to install the new OS. 
 Remember that it is only using the hard disk space that you have allocated.
@@ -48,6 +48,7 @@ git clone https://github.com/SolCygnus/laurie
 Run the following commands in the terminal:
 
 ```bash
+cd laurie
 chmod +x main.py
 sudo python3 main.py
 ```
