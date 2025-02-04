@@ -10,7 +10,7 @@ Download and install **Linux Mint 22.1 Cinnamon** in your preferred hypervisor.
 
 ---
 
-### **Step 2: Update, Snapshot, and Install Git**
+### **Step 2: Update, Snapshot, Install Git, Install VirtualBox Guest Additions**
 From the terminal, run:
 
 ```bash
@@ -18,21 +18,22 @@ sudo apt update && sudo apt upgrade -y
 sudo apt install git
 ```
 
+Insert Guest Additions from the VirtualBox - Devices toolbar - run. Shutdown system once complete
 
-📌 After updating, shutdown the VM and create a snapshot. A recommended naming convention is:
+📌 Create a snapshot. A recommended naming convention is:
 
     "base-DATE" (e.g., base-29Jan).
 
 ### **Step 3: Clone the Repository**
 
-Open a terminal and run:
+Open a terminal in your home directory and run:
+
+NOTE: when you first open a terminal you are in your home folder. This is where you want/need to execute this script. If you clone the repo 
+to another folder or within Documents folder installs will fail.
 
 ```bash
 git clone https://github.com/SolCygnus/laurie
 ```
-
-NOTE: when you first open a terminal you are in your home folder. This is where you want need to execute this script. If you clone the repo 
-to another folder or within Documents folder installs will fail.
 
 ### **Step 4: Make main.py Executable and Run It**
 
