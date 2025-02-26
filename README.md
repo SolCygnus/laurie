@@ -1,7 +1,7 @@
 # Laurie
 *"Pedo mellon a minno"*  
 
-This is a custom install for Debian-based Linux. It was built and tested using **Linux Mint 22.1 Cinnamon**.
+BETA Version. This is a Work in-progress, custom install for Debian-based Linux. It was built and tested using **Linux Mint 22.1 Cinnamon**.
 
 ## 🛠️ Installing and Running
 
