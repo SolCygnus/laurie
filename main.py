@@ -89,6 +89,7 @@ if __name__ == "__main__":
         "customizations.sh",
         "clamav_setup.sh",
         "harden.sh",
+        "systemx.sh",
     ]
 
     success = True
