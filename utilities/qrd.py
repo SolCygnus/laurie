@@ -8,7 +8,7 @@ import numpy as np
 from pyzbar.pyzbar import decode
 
 def decode_qr(image_path):
-    """Decodes a QR code from an image and saves the result to a text file inside qrd_venv."""
+    """Decodes a QR code from an image and saves the result to a text file inside the user's Documents folder."""
     try:
         # Expand tilde (~) to full path
         image_path = os.path.expanduser(image_path)
@@ -34,14 +34,14 @@ def decode_qr(image_path):
         # Extract decoded data
         qr_data = [qr.data.decode('utf-8') for qr in qr_codes]
         
-        # Define the output directory inside qrd_venv
-        venv_dir = os.path.expanduser("~/Documents/utilities/qrd_venv")
-        if not os.path.exists(venv_dir):
-            os.makedirs(venv_dir)
+        # Define the output directory inside the user's Documents folder
+        documents_dir = os.path.expanduser("~/Documents")
+        if not os.path.exists(documents_dir):
+            os.makedirs(documents_dir)
         
         # Generate output filename
         base_filename = os.path.splitext(os.path.basename(image_path))[0]
-        output_file = os.path.join(venv_dir, f"{base_filename}_decode.txt")
+        output_file = os.path.join(documents_dir, f"{base_filename}_decode.txt")
         
         # Save to a text file
         with open(output_file, "w") as file:
@@ -54,11 +54,11 @@ def decode_qr(image_path):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Decode a QR code from an image and save the result to a text file inside qrd_venv.",
+        description="Decode a QR code from an image and save the result to a text file inside the user's Documents folder.",
         epilog="Example usage: qr_decode.py /path/to/qrcode.png"
     )
     parser.add_argument("image_path", help="Path to the QR code image file")
-    parser.add_argument("--help", action="help", help="Show this help message and exit")
     args = parser.parse_args()
     decode_qr(args.image_path)
+
 
