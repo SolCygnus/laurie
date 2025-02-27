@@ -16,6 +16,7 @@ PACKAGES=(
     "vlc"
     "keepassxc"
     "python3-venv"
+    "python3-virtualenv"
 )
 
 # Function to install a package via APT
