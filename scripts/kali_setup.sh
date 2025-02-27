@@ -15,6 +15,7 @@ PACKAGES=(
     "obsidian"
     "shodan"
     "sqlitebrowser"
+    "proxychains4"
 )
 
 # Backup sources.list

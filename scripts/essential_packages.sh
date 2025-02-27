@@ -17,6 +17,7 @@ PACKAGES=(
     "keepassxc"
     "python3-venv"
     "python3-virtualenv"
+    "terminator"
 )
 
 # Function to install a package via APT
