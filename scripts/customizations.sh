@@ -100,7 +100,7 @@ With great power comes great responsibility.
     fi
 }
 
-#Move utilities to /usr/local/bin for global accessaility
+#Move utilities to /usr/local/bin for global accessibility
 move_utilities() {
     SOURCE_DIR="$(pwd)/utilities"
     DEST_DIR="/usr/local/bin"

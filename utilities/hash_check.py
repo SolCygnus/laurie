@@ -67,8 +67,8 @@ def main():
     """
     parser = argparse.ArgumentParser(
         description="Verify the hash of a file against a known hash, or list all hash values.",
-        usage="python hash_checker.py <file_path> [--hash <known_hash_value>]",
-        epilog="Examples:\n  python verify_hash.py sample.txt --hash 5d41402abc4b2a76b9719d911017c592\n  python verify_hash.py sample.txt"
+        usage="python hash_check.py <file_path> [--hash <known_hash_value>]",
+        epilog="Examples:\n  python hash_check.py sample.txt --hash 5d41402abc4b2a76b9719d911017c592\n  python verify_hash.py sample.txt"
     )
     
     parser.add_argument(

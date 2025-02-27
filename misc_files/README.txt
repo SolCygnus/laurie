@@ -27,6 +27,7 @@ spiderfoot
 theharvester
 shodan
 sqlitebrowser
+proxychains4
 
 OSR CLI tools Installed:
 yt-dlp
@@ -57,7 +58,7 @@ Hardening:
 
 
 Custom Utilties:
-+ hash_checker.py (can be ran globally from CLI using command "hash_checker" --help)
++ hash_check.py (can be ran globally from CLI using command "hash_check.py" --help)
 
 
 Customizations: 

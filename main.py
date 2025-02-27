@@ -88,6 +88,7 @@ if __name__ == "__main__":
         "kali_setup.sh",
         "customizations.sh",
         "clamav_setup.sh",
+        "qrd_vsetup.sh",
         "harden.sh",
         "systemx.sh",
     ]
