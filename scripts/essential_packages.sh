@@ -15,6 +15,7 @@ PACKAGES=(
     "curl"
     "vlc"
     "keepassxc"
+    "python3-venv"
 )
 
 # Function to install a package via APT
